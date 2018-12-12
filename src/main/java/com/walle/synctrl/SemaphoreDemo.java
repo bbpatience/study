@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
  **/
 public class SemaphoreDemo implements Runnable {
     public Semaphore semaphore = new Semaphore(5);
-    @Override
+//    @Override
     public void run() {
         try {
             semaphore.acquire();

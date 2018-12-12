@@ -42,7 +42,7 @@ public class ReadWriteLockDemo {
     public static void main(String[] args) {
         final ReadWriteLockDemo demo = new ReadWriteLockDemo();
         Runnable readRunnable = new Runnable() {
-            @Override
+//            @Override
             public void run() {
                 try {
                     demo.handleRead(readLock);
@@ -54,7 +54,7 @@ public class ReadWriteLockDemo {
         };
 
         Runnable writeRunnable = new Runnable() {
-            @Override
+//            @Override
             public void run() {
                 try {
                     demo.handleWrite(writeLock, new Random().nextInt());

@@ -11,9 +11,9 @@ import java.util.List;
  **/
 public class GenericTest {
     public static void main(String[] args) {
-        List<String> name = new ArrayList<>();
-        List<Integer> age = new ArrayList<>();
-        List<Number> number = new ArrayList<>();
+        List<String> name = new ArrayList<String>();
+        List<Integer> age = new ArrayList<Integer>();
+        List<Number> number = new ArrayList<Number>();
 
         name.add("icon");
         age.add(18);
@@ -27,7 +27,7 @@ public class GenericTest {
         getUperNumber(age);//2
         getUperNumber(number);//3
 
-        List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<Integer>();
 
         list.add(12);
 
