@@ -1,4 +1,4 @@
-package producer;
+package com.walle.producer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

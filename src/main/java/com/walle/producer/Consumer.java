@@ -1,4 +1,4 @@
-package producer;
+package com.walle.producer;
 
 import java.text.MessageFormat;
 import java.util.Random;

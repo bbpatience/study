@@ -1,4 +1,4 @@
-package synctrl;
+package com.walle.synctrl;
 
 /**
  * @author: bbpatience

@@ -1,4 +1,4 @@
-package generics;
+package com.walle.generics;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

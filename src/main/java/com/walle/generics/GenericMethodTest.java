@@ -1,4 +1,4 @@
-package generics;
+package com.walle.generics;
 
 /**
  * @author: bbpatience

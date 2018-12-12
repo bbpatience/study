@@ -1,4 +1,4 @@
-package producer;
+package com.walle.producer;
 
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;

@@ -1,4 +1,4 @@
-package producer;
+package com.walle.producer;
 
 /**
  * @author: bbpatience
