@@ -20,7 +20,8 @@ public class Verification {
         print(array);
 
 //        BaseSort sort = new BubbleSort();
-        BaseSort sort = new SelectionSort();
+//        BaseSort sort = new SelectionSort();
+        BaseSort sort = new InsertSort();
         sort.sort(array);
         System.out.print("\n sorted: ");
         print(array);
