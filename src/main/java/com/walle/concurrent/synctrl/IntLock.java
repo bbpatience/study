@@ -17,7 +17,7 @@ public class IntLock implements Runnable {
         lock = i;
     }
 
-//    @Override
+    @Override
     public void run() {
         try {
             if (this.lock == 1) {

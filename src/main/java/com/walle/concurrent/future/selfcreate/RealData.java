@@ -22,6 +22,7 @@ public class RealData implements Data {
         this.result = sb.toString();
     }
 
+    @Override
     public String getResult() {
         return this.result;
     }

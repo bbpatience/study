@@ -12,6 +12,9 @@ public class Verification {
             System.out.print(array[i] + " ,");
         }
         System.out.println();
+
+        // declarative
+//        Arrays.stream(array).forEach(System.out::print);
     }
 
     public static void main(String[] args) {
@@ -21,7 +24,9 @@ public class Verification {
 
 //        BaseSort sort = new BubbleSort();
 //        BaseSort sort = new SelectionSort();
-        BaseSort sort = new InsertSort();
+//        BaseSort sort = new InsertSort();
+        BaseSort sort = new QuickSort();
+//        BaseSort sort = new MergeSort();
         sort.sort(array);
         System.out.print("\n sorted: ");
         print(array);

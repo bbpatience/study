@@ -10,7 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
  **/
 public class TimeLock implements Runnable {
     private ReentrantLock lock = new ReentrantLock();
-//    @Override
+
+    @Override
     public void run() {
         try {
             if (lock.tryLock(5, TimeUnit.SECONDS)) {

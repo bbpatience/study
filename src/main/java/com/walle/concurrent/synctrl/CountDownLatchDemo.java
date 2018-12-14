@@ -14,7 +14,7 @@ public class CountDownLatchDemo implements Runnable {
 
     private static CountDownLatch downLatch = new CountDownLatch(10);
 
-//    @Override
+    @Override
     public void run() {
         try {
             long sleep = (new Random().nextInt(9) + 1) * 1000;

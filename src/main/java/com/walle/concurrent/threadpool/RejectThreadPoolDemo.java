@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class RejectThreadPoolDemo {
     public static class MyTask implements  Runnable {
 
-//        @Override
+        @Override
         public void run() {
             System.out.println(System.currentTimeMillis() + " Thread ID:" + Thread.currentThread().getId());
             try {
@@ -32,7 +32,7 @@ public class RejectThreadPoolDemo {
         ExecutorService es = new ThreadPoolExecutor(5, 5, 0L, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>(10), Executors.defaultThreadFactory(),
             new RejectedExecutionHandler() {
-//                @Override
+                @Override
                 public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
                     System.out.println(r.toString() + " discard. ");
                 }

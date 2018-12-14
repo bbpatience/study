@@ -7,6 +7,7 @@ package com.walle.sort;
  **/
 public class InsertSort implements BaseSort {
 
+    @Override
     public void sort(int[] array) {
         for (int i = 1; i < array.length; i++) {
             int preIndex = i - 1;

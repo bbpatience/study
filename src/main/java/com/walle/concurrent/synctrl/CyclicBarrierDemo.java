@@ -21,7 +21,7 @@ public class CyclicBarrierDemo {
             this.cb = cb;
         }
 
-//        @Override
+        @Override
         public void run() {
             try {
                 cb.await();// 等待所有士兵到齐
@@ -56,7 +56,7 @@ public class CyclicBarrierDemo {
             this.n = n;
         }
 
-//        @Override
+        @Override
         public void run() {
             if (flag) {
                 System.out.println("Commander : [ Soldier " + n + "], tasks done.");

@@ -7,6 +7,7 @@ package com.walle.sort;
  **/
 public class SelectionSort implements BaseSort {
 
+    @Override
     public void sort(int[] array) {
         for (int i = 0; i < array.length; i++) {
             int min_index = i;

@@ -10,7 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class FairLock implements Runnable {
 
     private ReentrantLock lock = new ReentrantLock(true);
-//    @Override
+
+    @Override
     public void run() {
         while (true) {
             try {
