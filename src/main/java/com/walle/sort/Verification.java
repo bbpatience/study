@@ -12,9 +12,6 @@ public class Verification {
             System.out.print(array[i] + " ,");
         }
         System.out.println();
-
-        // declarative
-//        Arrays.stream(array).forEach(System.out::print);
     }
 
     public static void main(String[] args) {
