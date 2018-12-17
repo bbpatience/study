@@ -5,7 +5,6 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import com.walle.actors.Greeter.Msg;
 
 /**
  * @author: bbpatience
