@@ -7,7 +7,6 @@ import akka.actor.Terminated;
 import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import com.typesafe.config.ConfigFactory;
 
 /**
  * @author: bbpatience
