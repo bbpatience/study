@@ -1,4 +1,4 @@
-package com.walle.actors;
+package com.walle.actors.helloworld;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;

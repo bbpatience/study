@@ -1,4 +1,4 @@
-package com.walle.actors;
+package com.walle.actors.helloworld;
 
 import akka.actor.UntypedActor;
 import akka.event.Logging;
