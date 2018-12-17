@@ -26,6 +26,14 @@ public class MyWorker  extends UntypedActor {
             log.info("I will shutdown.");
             getSender().tell(Msg.CLOSE, getSelf());
             getContext().stop(getSelf());
+        } else if (message instanceof Integer) {
+            int i = (Integer) message;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            getSender().tell(i * i, getSelf());
         } else {
             unhandled(message);
         }
