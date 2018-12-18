@@ -4,6 +4,8 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.walle.actors.inbox.MyWorker.Msg;
+import akka.transactor.Coordinated;
+import scala.concurrent.stm.japi.STM;
 
 /**
  * @author: bbpatience
