@@ -329,8 +329,38 @@ public static native void sleep(long millis) throw InterruptedException
 
 - 用 threadpool.execute() 代替 submit()， 可以看到更多异常信息。
 
+### 并发集合:
 
+1. 线程安全的HashMap: 
+- Collections.synchronizedMap(new HashMap()): 它使用委托，将自己所有Map相关功能委托给传入的HashMap实现，而自己负责线程安全。mutex加锁
+- ConcurrentHashMap: 减少锁粒度，分为16个SEGMENT的 HashMap,分别加锁。
 
+2. 线程安全的List:
+- Collections.synchronizedList(new LinkedList<String>()
+- ArrayList非线程安全， Vector 线程安全，但效率不高
+- ConcurrentLinkedQueue: 高并发下性能最好的队列, 采用无锁，CAS操作. 使用了sun提供的 UNSAFE, native 到 C层， 再映射为 操作系统的CAS操作。
+```
+    boolean casItem(E cmp, E val) {
+        return UNSAFE.compareAndSwapObject(this, itemOffset, cmp, val);
+    }
+```
+
+3. CopyOnWriteArrayList: 高效读取
+- 读取时不需加锁，写入也不会阻塞读操作
+- List需要修改时，并不修改原内容，而是复制原List，在副本中修改。写完之后再由副本替换原数据。
+
+4. BlockingQueue: 数据共享通道
+- ArrayBlockingQueue
+- LinkedBlockingQueue
+- 通过 ReentrantLock, Condition notEmpty, Condition notFull来实现队列为空挂 起直到有入队；队列满挂起直到有出队
+
+5. SkipList: 跳表，随机数据结构
+- 可以用来快速查找的数据结构， 有序
+- 类似平衡树，但平衡树在插入时需要全局调整，而跳表只是对局部进行操作
+- 高并发下，平衡树需要全局加锁，而跳表只需局部加锁
+- 同时维护了多个链表，最底层包含全数据。  
+- 数据冗余，空间换时间。
+- ConcurrentSkipListMap
 
 ## 锁优化
 ### 锁优化的几点建议:
@@ -452,3 +482,75 @@ public static native void sleep(long millis) throw InterruptedException
 > 通过对运行上下文的扫描，去除不可能存在的共享资源竞争的锁。
 
 ### ThreadLocal
+
+1. 为每一个线程分配不同的对象，由应用层来保证。ThreadLocal 只起到了简单的容器作用。
+```
+private static ThreadLocal<SimpleDateFormat> tl = new ThreadLocal<>();
+
+public void run() {
+    if (tl.get() == null) {
+        tl.set(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    }
+    Date t = tl.get().parse("2018-12-12 15:23:" + i % 60);
+}
+```
+
+2. 保存在了本线程的map里边
+```
+public void set(T value) {
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+    }
+```
+3. 因为set到了线程上，而对于线程池来说，线程没有退出，这些线程私有变量也不会回收。这样会造成内存泄漏。 使用 ThreadLocal.remove()移除该变量可以避免。或者 tl = null强制GC回收。
+
+### 无锁
+1. 比较交换(CAS): 
+
+> CAS需要你提供一个额外的期望值，如果变量不是你期望的那样，说明它已被别人修改，你就重新读取，再次尝试就好了
+
+2. AtomicInteger: 无锁的线程安全整数
+3. AtomicReference: 无锁的对象引用
+
+> ABA 问题， CAS
+
+4. AtomicStampedReference: 设置对象时，对象值以及时间戳都必须满足期望值，写入才会成功。 可以防止ABA问题。
+5. 数组无锁: AtomicIntegerArray
+6. 普通变量享有原子操作: AtomicIntegerFieldUpdater<T>
+
+> 升级变量必须可见，因为用的是反射
+
+> 类型要添加 volatile
+
+> 不支持 static 变量
+
+### 死锁
+1. 概念:两个或者多个线程，相互占用对方需要的资源，而都不进行释放，导致彼此之间都相互等待对方释放资源，产生了无限等待的现象
+2. 可以通过jps, jstack查看
+```
+Found one Java-level deadlock:
+=============================
+"Phi B":
+  waiting to lock monitor 0x00007fc1ad0333f8 (object 0x00000007957a69e0, a java.lang.Object),
+  which is held by "Phi A"
+"Phi A":
+  waiting to lock monitor 0x00007fc1ad033558 (object 0x00000007957a69f0, a java.lang.Object),
+  which is held by "Phi B"
+
+Java stack information for the threads listed above:
+===================================================
+"Phi B":
+	at com.walle.concurrent.deadlock.DeadLock.run(DeadLock.java:47)
+	- waiting to lock <0x00000007957a69e0> (a java.lang.Object)
+	- locked <0x00000007957a69f0> (a java.lang.Object)
+"Phi A":
+	at com.walle.concurrent.deadlock.DeadLock.run(DeadLock.java:35)
+	- waiting to lock <0x00000007957a69f0> (a java.lang.Object)
+	- locked <0x00000007957a69e0> (a java.lang.Object)
+
+Found 1 deadlock.
+```
