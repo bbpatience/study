@@ -1,4 +1,4 @@
-package com.walle.stream;
+package com.walle.java8.stream;
 
 import java.util.Arrays;
 import java.util.Random;
