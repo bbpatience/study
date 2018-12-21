@@ -6,9 +6,9 @@ import java.util.Random;
 /**
  * @author: bbpatience
  * @date: 2018/12/21
- * @description: ParellelSort
+ * @description: ParallelSort
  **/
-public class ParellelSort {
+public class ParallelSort {
 
     public static void main(String[] args) {
         int[] arr = new int[100];
@@ -16,11 +16,11 @@ public class ParellelSort {
 
 //        Arrays.setAll(arr, (i) -> r.nextInt(100));
         Arrays.parallelSetAll(arr, (i) -> r.nextInt(100));
-        Arrays.stream(arr).forEach(ParellelSort::print);
+        Arrays.stream(arr).forEach(ParallelSort::print);
         System.out.println();
 
         Arrays.parallelSort(arr);
-        Arrays.stream(arr).forEach(ParellelSort::print);
+        Arrays.stream(arr).forEach(ParallelSort::print);
         System.out.println();
     }
 
