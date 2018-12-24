@@ -328,9 +328,50 @@ public static native void sleep(long millis) throw InterruptedException
 > N_threads = N_cpu * U_cpu * (1 + W/C)
 
 - 用 threadpool.execute() 代替 submit()， 可以看到更多异常信息。
+- ForkJoinPool:  JDK1.7 新并发框架，分治思想。 
 
+> 提交ForkJoinTask.
 
+> RecursiveAtion 和 RecursiveTask 一个有返回值，一个没有。
 
+> 并不是每个 fork() 都会促成一个新线程被创建，而每个 join()也不是一定会造成线程被阻塞。不会因为fork越来越细而产生更多的线程。
+
+> 算法的名字就叫做 work stealing 算法
+
+> fork放入工作队列，线程完成自己的任务，去其他线程窃取其他任务；join也不是单独等待，而是边取窃取任务工作，边等待。
+
+### 并发集合:
+
+1. 线程安全的HashMap: 
+- Collections.synchronizedMap(new HashMap()): 它使用委托，将自己所有Map相关功能委托给传入的HashMap实现，而自己负责线程安全。mutex加锁
+- ConcurrentHashMap: 减少锁粒度，分为16个SEGMENT的 HashMap,分别加锁。
+
+2. 线程安全的List:
+- Collections.synchronizedList(new LinkedList<String>()
+- ArrayList非线程安全， Vector 线程安全，但效率不高
+- ConcurrentLinkedQueue: 高并发下性能最好的队列, 采用无锁，CAS操作. 使用了sun提供的 UNSAFE, native 到 C层， 再映射为 操作系统的CAS操作。
+```
+    boolean casItem(E cmp, E val) {
+        return UNSAFE.compareAndSwapObject(this, itemOffset, cmp, val);
+    }
+```
+
+3. CopyOnWriteArrayList: 高效读取
+- 读取时不需加锁，写入也不会阻塞读操作
+- List需要修改时，并不修改原内容，而是复制原List，在副本中修改。写完之后再由副本替换原数据。
+
+4. BlockingQueue: 数据共享通道
+- ArrayBlockingQueue
+- LinkedBlockingQueue
+- 通过 ReentrantLock, Condition notEmpty, Condition notFull来实现队列为空挂 起直到有入队；队列满挂起直到有出队
+
+5. SkipList: 跳表，随机数据结构
+- 可以用来快速查找的数据结构， 有序
+- 类似平衡树，但平衡树在插入时需要全局调整，而跳表只是对局部进行操作
+- 高并发下，平衡树需要全局加锁，而跳表只需局部加锁
+- 同时维护了多个链表，最底层包含全数据。  
+- 数据冗余，空间换时间。
+- ConcurrentSkipListMap
 
 ## 锁优化
 ### 锁优化的几点建议:
@@ -452,3 +493,429 @@ public static native void sleep(long millis) throw InterruptedException
 > 通过对运行上下文的扫描，去除不可能存在的共享资源竞争的锁。
 
 ### ThreadLocal
+
+1. 为每一个线程分配不同的对象，由应用层来保证。ThreadLocal 只起到了简单的容器作用。
+```
+private static ThreadLocal<SimpleDateFormat> tl = new ThreadLocal<>();
+
+public void run() {
+    if (tl.get() == null) {
+        tl.set(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    }
+    Date t = tl.get().parse("2018-12-12 15:23:" + i % 60);
+}
+```
+
+2. 保存在了本线程的map里边
+```
+public void set(T value) {
+        Thread t = Thread.currentThread();
+        ThreadLocalMap map = getMap(t);
+        if (map != null)
+            map.set(this, value);
+        else
+            createMap(t, value);
+    }
+```
+3. 因为set到了线程上，而对于线程池来说，线程没有退出，这些线程私有变量也不会回收。这样会造成内存泄漏。 使用 ThreadLocal.remove()移除该变量可以避免。或者 tl = null强制GC回收。
+
+### 无锁
+1. 比较交换(CAS): 
+
+> CAS需要你提供一个额外的期望值，如果变量不是你期望的那样，说明它已被别人修改，你就重新读取，再次尝试就好了
+
+2. AtomicInteger: 无锁的线程安全整数
+3. AtomicReference: 无锁的对象引用
+
+> ABA 问题， CAS
+
+4. AtomicStampedReference: 设置对象时，对象值以及时间戳都必须满足期望值，写入才会成功。 可以防止ABA问题。
+5. 数组无锁: AtomicIntegerArray
+6. 普通变量享有原子操作: AtomicIntegerFieldUpdater<T>
+
+> 升级变量必须可见，因为用的是反射
+
+> 类型要添加 volatile
+
+> 不支持 static 变量
+
+### 死锁
+1. 概念:两个或者多个线程，相互占用对方需要的资源，而都不进行释放，导致彼此之间都相互等待对方释放资源，产生了无限等待的现象
+2. 可以通过jps, jstack查看
+```
+Found one Java-level deadlock:
+=============================
+"Phi B":
+  waiting to lock monitor 0x00007fc1ad0333f8 (object 0x00000007957a69e0, a java.lang.Object),
+  which is held by "Phi A"
+"Phi A":
+  waiting to lock monitor 0x00007fc1ad033558 (object 0x00000007957a69f0, a java.lang.Object),
+  which is held by "Phi B"
+
+Java stack information for the threads listed above:
+===================================================
+"Phi B":
+	at com.walle.concurrent.deadlock.DeadLock.run(DeadLock.java:47)
+	- waiting to lock <0x00000007957a69e0> (a java.lang.Object)
+	- locked <0x00000007957a69f0> (a java.lang.Object)
+"Phi A":
+	at com.walle.concurrent.deadlock.DeadLock.run(DeadLock.java:35)
+	- waiting to lock <0x00000007957a69f0> (a java.lang.Object)
+	- locked <0x00000007957a69e0> (a java.lang.Object)
+
+Found 1 deadlock.
+```
+
+## 并发模式与算法
+### 单例模式
+```
+public class StaticSingleton {
+    private StaticSingleton() {
+        System.out.println("StaticSingleton create.")
+    }
+    private static class SingletonHolder {
+        private static StaticSingleton instance = new StaticSingleton();
+    }
+    public static StaticSingleton getInstance() {
+        return SingletonHolder.instance;
+    }
+}
+```
+此种创建方法的几点好处:
+
+- getInstance 没有 synchronized, 高并发环境下性能优越
+- 延迟加载，只有在用到的时候，才初始化
+- SingletonHolder是private, 所以非共享，不会有并发问题，而内部类，可以利用JVM类初始化机制来创建单例
+
+### 不变模式
+
+- 核心思想是，一个对象一旦被创建，则它的内部状态将永远不会发生改变。
+- 对不变对象的多纯种操作，是不需要进行同步控制的
+- 在java 中要注意4点
+- -  去除setter 方法
+- -  所有属性为私有，并用final标记
+- -  确保没有子类可以重载修改它的形为
+- -  有一个可创建完整对象的构造函数
+- 像String ,Integer, Double, Long等元数据包装类，均为不变模式实现，所有实例方法不需要同步。
+```
+    public final class Product {
+        private final String name;
+        
+        public Product(String name) {
+            this.name = name;
+        }
+        
+        public String getName() {
+            return name;
+        }
+    }
+```
+### 生产者-消费者模式
+
+1. 生产都-消费都模式很好的对生产者线程和消费者线程解耦，优化了系统整体结构。同时，由于缓冲区的作用，允许生产者线程和消费者线程存在执行上的性能差异，从一定程度上缓解了性能瓶颈对系统性能的影响。
+2. 用BlockingQueue作为共享内存缓冲区，来实现生产者-消费者
+
+- 采用阻塞方式来完成数据同步，性能不高，不支持高并发
+
+3. 无锁的缓存框架: Disruptor
+
+- 采用ring buffer 环行队列. 
+
+- 队列大小要设置成 2的整数次方，如1024。 这样通过 sequence & (queueSize - 1) 就可以立即定位到该元素，而比 取余 % 快得多
+
+- 性能可以比BlockingQueue快一个数量级
+- 采用 CAS
+- 提供了不同的等待策略来提高吞吐量。 BlockingWaitStrategy < SleepingWaitStrategy < YieldWaitStrategy < BusySpinWaitStrategy 低延时，高CPU占用
+- 解决CPU Cache 伪共享, 以 Padding方式
+
+    > CPU Cache 伪共享是由于同一个Cache里边存入多个变量，导致一个失效其他的也失效，但原本这些变量不该失效，这样使命中率降低。其中一个方法是把这个变量进行padding，使他充满一个Cache。方法不太优雅。
+
+### Future模式
+
+1. 每一次返回拿到的 Future Data只是一个 契约(*Compact*)，之后真正取数据是用这个契约得到真实数据。 如果数据仍然没有准备好，则阻塞。
+2. JDK Future模式:
+- 实现Callable<T>的 call() 用于构建真实数据
+- FutureTask<T> 的构造函数，传入真实数据构建
+- future task在线程池启动, 它相当于 契约
+- 调用 future task.get() 得到真实数据
+
+### 并行流水线
+- 各线程各司其职，处理发送到自己队列中事情，构建并发流水线。
+
+### 并行搜索
+
+- 无序数组的搜索:  分治思想， 起CPU相同核数的线程去分别求搜索结果。
+
+### 并行排序
+
+//TODO
+
+### 矩阵算法
+
+//TODO
+
+### 网络BIO, NIO， AIO
+
+1. BIO: Blocking IO, 阻塞IO
+
+- 服务器会为每个客户端连接启用一个线程
+- 为了接受客户端连接，服务器还有一个派发线程
+- 客户端缓慢处理速度使用服务器也花费长时间等待
+
+2. NIO: New IO，非阻塞同步IO
+
+- 关键组件:
+
+> Channel通道，类似于流，一个channel可以和文件或Socket对应
+
+> Buffer: 数据要包装成Buffer的形式才能和Channel交互
+
+> Selector:  一个Selector可以管理多个SelectalbeChannel. 当SelectableChannel的数据准备好时，Selector就会接到通知，得到那些准备好的数据。
+
+- 核心思想: 有数据到来再通知我，我来同步处理。但处理是在线程中同步进行的，即处理还是由我来做的。
+
+3. AIO: Asyc IO, 非阻塞异步IO
+
+- 核心思想: 有数据到来并且处理完再通知我，业务逻辑以回调形式交给系统，即处理是由系统来做的，非阻塞，并且异步。
+
+```
+server = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress(PORT));
+
+
+server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+
+    @Override
+    public void completed(AsynchronousSocketChannel result, Object attachment) {
+    }
+
+    @Override
+    public void failed(Throwable exc, Object attachment) {
+    }
+});
+```
+
+## Java 8
+### 函数式编程
+1. 函数式编程的特点
+- 将函数作为参数传递给另一个函数
+- 函数可以作为另外一个函数的返回值
+2. 函数式编程基础
+- @FunctionalInterface 函数式接口，只定义了单一抽象方法的接口。
+```
+@FunctionalInterface
+public static interface IntHandler {
+    void handle(int i);
+}
+```
+- 接口默认方法
+```
+public interface IHorse {
+    void eat();
+    default void run() {
+        System.out.println("horse run");
+    }
+}
+```
+- lambda表达式
+- 方法引用
+
+> 静态方法引用: ClassName::methodName
+
+> 实例上的实例方法引用: instanceReference::mehodName
+
+> 超类上的实例方法引用: super::methodName
+
+> 类型上的实例方法引用: ClassName::methodName
+
+> 构造方法引用: Class::new
+
+> 数组构造方法引用: TypeName[]::new
+
+```
+    users.stream().map(User::getName).forEach(System.out::println);
+```
+3. 流式API： users.stream() 替代 for in 循环
+
+> 并行流
+
+```
+IntStream.range(1, 1000000).filter(PrimeUtils::isPrime).count();
+
+//parallel
+IntStream.range(1, 1000000).parallel().filter(PrimeUtils::isPrime).count();
+```
+
+- 并行排序: Arrays.parallelSort(arr);
+
+4. CompletableFuture: 增强的Future
+
+> 通过CompletionStage提供的接口，可以在一个执行结果上进行多次流式调用。
+
+```
+    stage.thenApply(x -> squar(x))
+         .thenAccept(x-> System.out.print(x))
+         .thenRun(System.out.println());
+```
+5. StampedLock
+
+> 读写锁的改进版本, 除了读读完全并发外，读写使用乐观锁
+
+- 读时，会先long stamp = sl.tryOptimisticRead()
+- 真正用的时候再验证stamp, sl.validate(stamp)
+- 若一致，说明中间没有发生写操作，则原读取数据可以用
+- 若不一致，说明中间发生写操作，会升级锁为 悲观锁，重新读取数据。
+
+6. LongAdder:
+- 采用和ConcurrentHashMap相同的思路，分离热点数据，将核心数据分离成多个cell.每个cell独立维护内部值。 当前对象的实际值由所有cell累计合成。
+- LongAccumlator
+
+
+## Akka
+### 概念
+- Actor并发模型，粒度比线程更小，可以启用极大量的Actor.
+- 容错机制，允许在出现异常时进行恢复或重置
+- 单机和网络都可进行高并发程序
+
+### 消息
+- 是Akka中的另一个核心组件，建议采用不变模式。可变的消息无法高效的使用高并发模式
+- 消息投递的三种策略: **(消息可靠性由业务层保证)**
+
+> 1. 至多一次投递，有可能造成消息丢失
+> 2. 至少一次投递，有可能造成消息重复
+> 3. 精确投递，既不丢失，也不重复
+
+- Akka可以在一定程度上保证消息投递的顺序性
+
+### Actor的生命周期
+- 空 -- (actorOf) --> Actor
+- Actor -- (resume) --> Actor
+- Actor -- (stop, posionPill) --> 空
+- Actor -- (restart) --> 新实例
+- 新实例 -- (postRestart 替换) --> 新Actor
+
+> 一些回调 preStart(), postStop(), preRestart()
+
+### Actor的监督策略
+- 一般由父Actor来监督，有2种策略:
+- 1. OneForOneStrategy: 出问题时只重启被监管的Actor.
+- 2. AllForOneStrategy: 出问题时父Actor会对其和兄弟Actor一起重启
+
+### 选择Actor
+- 批处理管理和通信: ActorSelection.
+- 可利用通配符进行消息发送，如 "/user/worker_*"
+
+### 消息收件箱inbox
+```
+ActorRef worker = system.actorOf(Props.create(MyWorker.class), "worker");
+
+final Inbox inbox = Inbox.create(system);
+inbox.watch(worker);
+inbox.send(worker, Msg.WORKING);
+inbox.send(worker, Msg.DONE);
+inbox.send(worker, Msg.CLOSE);
+
+while (true) {
+    Object msg = inbox.receive(Duration.create(1, TimeUnit.SECONDS));
+    if (msg == Msg.CLOSE) {
+        System.out.println("My worker is closing.");
+    } else if (msg instanceof Terminated) {
+        System.out.println("My worker is dead.");
+        system.shutdown();
+        break;
+    } else {
+        System.out.println(msg);
+    }
+}
+```
+
+### 消息路由 Router
+- 实现 一组Actor的负载均衡。
+- 一个Router可以接管一组Actor,发往Router的消息会以一种策略转发给Actor中的一个或多个，如RR策略.
+- 出问题或被关闭的Actor可以从Router中踢出。
+```
+public Router router;
+{
+    List<Routee> routees = new ArrayList<>();
+    for (int i =0;i < 5 ; i++) {
+        ActorRef worker = getContext().actorOf(Props.create(MyWorker.class), "worker_" + i);
+        getContext().watch(worker);
+        routees.add(new ActorRefRoutee(worker));
+    }
+    router = new Router(new RoundRobinRoutingLogic(), routees);
+}
+
+@Override
+public void onReceive(Object message) throws Throwable {
+    if (message instanceof MyWorker.Msg) {
+        router.route(message, getSender());
+    }
+}
+```
+
+### Actor的内置状态转换
+- 根据当前Actor的不同状态，来响应到来的Message.
+- getContext().become 来切换状态，在apply()实现不同状态对Message的处理。
+```
+    Procedure<Object> angry = new Procedure<Object>() {
+        @Override
+        public void apply(Object param) throws Exception {
+            System.out.println("Angry apply: " + param);
+            if (param == Msg.SLEEP) {
+                getSender().tell("I'm already angry.", getSelf());
+                System.out.println("I am already angry.");
+            } else if (param == Msg.PLAY) {
+                System.out.println("I like playing.");
+                getContext().become(happy);
+            }
+        }
+    };
+```
+
+### Actor中的Future模式
+- Ask 之后得到 契约，之后两种处理
+- 一种是异步调用转为同步阻塞调用， Await等待Actor返回
+- 另一种是管道方式，pipe()，等返回后直接转到另一个处理Actor.
+```
+Future<Object> f = ask(worker, 5, 1500);
+int re = (int) Await.result(f, Duration.create(6, TimeUnit.SECONDS));
+
+System.out.println("return:" + re);
+
+f = ask(worker, 6, 1500);
+pipe(f, system.dispatcher()).to(printer);
+```
+
+### Actor修改共享数据
+- Agent: 一个Agent提供了一个对变量的异步更新
+
+> 当对变量进行更新，会向Agent下发一个action.
+
+> 多个action会在ExecutionContext中被并发调度执行
+
+> 任意时刻只能执行一个action.
+
+> Agent的修改可以使用 send()或者alter().
+
+```
+public static  Agent<Integer> counterAgent = Agent.create(0, ExecutionContexts.global());
+```
+
+### STM 软件事务内存:
+- 具有 ACI事务属性，不具有D，持久化
+- 事务由 Coordinated message实现,出错情况可以进行回滚
+```
+    private Ref.View<Integer> count = STM.newRef(100);
+    
+    final Coordinated c = (Coordinated) message;
+    c.atomic(new Runnable() {
+        @Override
+        public void run() {
+            if (count.get() < downCount) {
+                throw new RuntimeException("less than " + downCount);
+            }
+            STM.increment(count, -downCount);
+        }
+    });
+```
+
+
