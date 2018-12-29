@@ -35,6 +35,12 @@
             <artifactId>akka-transactor_2.10</artifactId>
             <version>2.3.16</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.4.Final</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
