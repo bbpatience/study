@@ -1,4 +1,4 @@
-package com.walle.concurrent.generics;
+package com.walle.generics;
 
 /**
  * @author: bbpatience
