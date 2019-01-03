@@ -5,7 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.util.CharsetUtil;
+import java.util.Random;
 
 /**
  * @author: bbpatience
@@ -17,13 +17,23 @@ public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks", CharsetUtil.UTF_8));
+        ByteBuf bb = Unpooled.buffer(42);
+        Random r = new Random();
+        while (bb.writableBytes() >= 4) {
+            int i = r.nextInt(10);
+            bb.writeInt(i);
+        }
+        ctx.writeAndFlush(bb);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf)
         throws Exception {
-        System.out.println("Client received: " + byteBuf.toString(CharsetUtil.UTF_8));
+//        System.out.println("Client received: " + byteBuf.toString(CharsetUtil.UTF_8));
+        while (byteBuf.isReadable()) {
+            System.out.print(byteBuf.readInt() + ",");
+        }
+        System.out.println();
     }
 
     @Override
