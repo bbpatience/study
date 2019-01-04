@@ -7,6 +7,7 @@ import com.walle.annotation.FruitColor.Color;
  * @date: 2019/1/4
  * @description: Apple
  **/
+@FruitType("apple description")
 public class Apple {
 
     @FruitName("Apple")
@@ -16,6 +17,8 @@ public class Apple {
     private String appleColor;
 
     public static void main(String[] args) {
-        AnnotationUtils.getFieldInfo(Apple.class);
+//        AnnotationUtils.getAnnotationInfo(Apple.class);
+        Apple apple = new Apple();
+        AnnotationUtils.getAnnotationInfo(apple.getClass());
     }
 }

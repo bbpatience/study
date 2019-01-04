@@ -9,7 +9,12 @@ import java.lang.reflect.Field;
  **/
 public class AnnotationUtils {
 
-    public static void getFieldInfo(Class<?> clazz) {
+    public static void getAnnotationInfo(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(FruitType.class)) {
+            FruitType type = clazz.getAnnotation(FruitType.class);
+            System.out.println(type.value());
+        }
+
         Field fields[] = clazz.getDeclaredFields();
 
         for (Field field : fields) {
