@@ -106,7 +106,11 @@ addons = [
 #### Android
 
 * WIFI环境下，设置http 代理即可
-* TBD
+* 4G下，单独设置APN，比如COPY CMNET,然后添加代理设置
+
+> 一些APK采用自己证书认证，不信任系统的，可能需要破解APK才行。  
+
+> APK自己认证采用的技术为 Pinning. https://www.jianshu.com/p/259c02ac481b
 
 
 ### 附录
@@ -123,7 +127,7 @@ iptables -t nat -A PREROUTING -p tcp --dport 8444 -j REDIRECT --to-ports 8888
 iptables -t nat -A OUTPUT -p tcp -d localhost --dport 8444 -j REDIRECT --to-ports 8888
 ```
 
-> 当前主流VPN搭建有  ShadowSocks 和 OpenVPN. 二者都有自己的客户端，它们均要在客户端本地搭建一个Server, 代理所有4G流量
+> 当前主流VPN搭建有  SS 和 OpenVPN. 二者都有自己的客户端，它们均要在客户端本地搭建一个Server, 代理所有4G流量
 
 > 在使用SS导向流量时，mitmproxy接收到的http请求，URL会被 BASE64 encode，所以解析不出来
 
@@ -132,3 +136,10 @@ iptables -t nat -A OUTPUT -p tcp -d localhost --dport 8444 -j REDIRECT --to-port
 * 核心思想:   搭建Server 接收http请求，再用 Client转发该请求并跟进后续Response.
 * netty 官方例子:
 https://github.com/netty/netty/tree/4.1/example/src/main/java/io/netty/example/proxy
+
+#### 用到的几个命令
+```
+netstat -apn | grep LISTEN
+
+nslookup www.baidu.com
+```
