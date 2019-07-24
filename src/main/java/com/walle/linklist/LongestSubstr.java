@@ -8,31 +8,32 @@ package com.walle.linklist;
 public class LongestSubstr {
 
     public static String longestPalindrome(String s) {
-        if (s == null || s.length() == 0) {
+        if (s.isEmpty()) {
             return s;
         }
-        int maxLen = 0;
-        String result = "";
+        int start = 0, end = 0;
         for (int i = 0; i < s.length(); i++) {
-            int k = 0;
-            int j = i + 1;
-            while (j < s.length()) {
-                if (s.charAt(j) == s.charAt(i)) {
-                    k = j;
-                }
-                j++;
-            }
-            if (k - i >= maxLen) {
-                maxLen = k - i;
-                result = s.substring(i, k + 1);
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i+1);
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
         }
-        if (result.length() == 0) {
-            return s.substring(0,1);
+
+        return s.substring(start, end + 1);
+    }
+
+    public static int expandAroundCenter(String s, int left, int right) {
+        int L = left, R = right;
+        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
+            L--;
+            R++;
         }
-        return result;
+        return R - L - 1;
     }
     public static void main(String[] args) {
-        System.out.println(longestPalindrome("ccc"));
+        System.out.println(longestPalindrome("ababa"));
     }
 }

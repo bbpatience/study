@@ -43,9 +43,39 @@ public class ZConvert {
     }
 
     public static void main(String[] args) {
-        String test = "LEETCODEISHIRING";
-        int count = 3;
-        System.out.println("pre:" + test);
-        System.out.println("after:" + convert(test, count));
+//        String test = "LEETCODEISHIRING";
+//        int count = 3;
+//        System.out.println("pre:" + test);
+//        System.out.println("after:" + convert(test, count));
+        System.out.println(" " + isPalindrome(12321));
     }
+
+    public static int reverse(int x) {
+        int ans = 0;
+        while (x != 0) {
+            int pop = x % 10;
+            ans = ans * 10 + pop;
+            x /= 10;
+        }
+        return ans;
+    }
+
+    public static boolean isPalindrome(int x) {
+        //边界判断
+        if (x < 0) return false;
+        int div = 1;
+        //
+        while (x / div >= 10) {
+            div *= 10;
+        }
+        while (x > 0) {
+            int left = x / div;
+            int right = x % 10;
+            if (left != right) return false;
+            x = (x % div) / 10;
+            div /= 100;
+        }
+        return true;
+    }
+
 }
