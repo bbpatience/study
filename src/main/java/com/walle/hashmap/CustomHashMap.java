@@ -1,4 +1,4 @@
-package com.walle.hasmap;
+package com.walle.hashmap;
 
 import java.util.ArrayList;
 import java.util.List;

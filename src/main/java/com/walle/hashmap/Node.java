@@ -1,4 +1,4 @@
-package com.walle.hasmap;
+package com.walle.hashmap;
 
 /**
  * @author: bbpatience
