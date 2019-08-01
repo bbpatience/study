@@ -14,13 +14,13 @@ import java.util.Queue;
 public class TreeMain {
 
     public static void main(String[] args) {
-        Integer[] list = {3, 9, 20, null, null, 15, 7};
+        Integer[] list = {9, 4, 13, null, null, 11, 15};
         TreeNode head = init(list);
-        System.out.println("minDepth:" + minDepth(head));
-        System.out.println("maxDepth:" + maxDepth(head));
-        System.out.println("node count :" + getNodeNumRec(head));
+//        System.out.println("minDepth:" + minDepth(head));
+//        System.out.println("maxDepth:" + maxDepth(head));
+//        System.out.println("node count :" + getNodeNumRec(head));
         print(head);
-        print(mirror(head));
+        print(convertBST(head));
     }
 
     public static void print(TreeNode head) {
@@ -120,5 +120,27 @@ public class TreeMain {
         root.left = right;
         root.right = left;
         return root;
+    }
+
+    /*
+    * 计算累加树，
+    * */
+    public static TreeNode convertBST(TreeNode root) {
+        if (root != null) {
+            dfs(root, 0);
+        }
+        return root;
+    }
+
+    private static int dfs(TreeNode root, int sum) {
+        if (root == null) {
+            return sum;
+        }
+        sum = dfs(root.right, sum);
+        int v = root.val;
+        root.val += sum;
+        sum += v;
+        sum = dfs(root.left, sum);
+        return sum;
     }
 }
