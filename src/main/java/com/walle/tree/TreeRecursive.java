@@ -7,9 +7,9 @@ import static com.walle.tree.TreeUtils.print;
  * Recursively invoke.
  * @author: bbpatience
  * @date: 2019/7/25
- * @description: TreeMain
+ * @description: TreeRecursive
  **/
-public class TreeMain {
+public class TreeRecursive {
 
     public static void main(String[] args) {
         Integer[] list = {9, 4, 13, null, null, 11, 15};
