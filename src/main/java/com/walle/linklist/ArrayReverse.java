@@ -50,11 +50,19 @@ public class ArrayReverse {
         return head;
     }
 
+    public ListNode reverse2(ListNode head) {
+        if (head == null || head.next == null) return head;
+        ListNode p = reverse2(head.next);
+        head.next.next = head;
+        head.next = null;
+        return p;
+    }
+
     public static void main(String[] args) {
         ArrayReverse item = new ArrayReverse();
         int[] array = new int[]{1, 2, 3, 4};
         ListNode head = item.initListNode(array);
         item.print(head, "origin: ");
-        item.print(item.swapPairs(head), "result: ");
+        item.print(item.reverse2(head), "result: ");
     }
 }
