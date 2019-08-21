@@ -36,11 +36,25 @@ public class ArrayReverse {
         }
         System.out.println();
     }
+
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode p = head.next;
+        ListNode q = head.next.next;
+        p.next = head;
+        head.next = q;
+        head = p;
+
+        head.next.next = swapPairs(head.next.next);
+        return head;
+    }
+
     public static void main(String[] args) {
         ArrayReverse item = new ArrayReverse();
-        int[] array = new int[]{1, 2, 3, 4, 5 , 6};
+        int[] array = new int[]{1, 2, 3, 4};
         ListNode head = item.initListNode(array);
         item.print(head, "origin: ");
-        item.print(item.reverse(head), "result: ");
+        item.print(item.swapPairs(head), "result: ");
     }
 }
