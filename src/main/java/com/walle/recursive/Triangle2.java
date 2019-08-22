@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.util.Pair;
 
 /**
  * @author: bbpatience
@@ -11,7 +12,7 @@ import java.util.Map;
  * @description: Triangle
  **/
 public class Triangle2 {
-    public static Map<Map<Integer, Integer>, Integer> cache = new HashMap<>();
+    public static Map<Pair<Integer, Integer>, Integer> cache = new HashMap<>();
 
     public List<Integer> getRow(int rowIndex) {
         List<Integer> list = new ArrayList<>();
@@ -24,18 +25,17 @@ public class Triangle2 {
     }
 
     public int func(int i, int j) {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(i, j);
-        if  (cache.containsKey(map)) {
-            return cache.get(map);
+        Pair<Integer, Integer> pair = new Pair<>(i, j);
+        if  (cache.containsKey(pair)) {
+            return cache.get(pair);
         }
 
         if (j == 1 || i == j) {
             return 1;
         }
         int result = func(i - 1, j -1) + func(i - 1, j);
-        if (!cache.containsKey(map)) {
-            cache.put(map, result);
+        if (!cache.containsKey(pair)) {
+            cache.put(pair, result);
         }
         return result;
     }
