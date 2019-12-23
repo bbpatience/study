@@ -1,4 +1,4 @@
-package com.walle.proxy;
+package com.walle.collections;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
