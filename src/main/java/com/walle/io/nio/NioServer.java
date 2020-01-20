@@ -32,7 +32,6 @@ public class NioServer {
 
     private void startServer() throws Exception {
         selector = SelectorProvider.provider().openSelector();
-
         ServerSocketChannel ssc = ServerSocketChannel.open();
         ssc.configureBlocking(false);
 
