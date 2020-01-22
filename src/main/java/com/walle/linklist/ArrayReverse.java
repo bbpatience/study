@@ -8,8 +8,11 @@ package com.walle.linklist;
 public class ArrayReverse {
 
     public ListNode reverse(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+
         ListNode newHead = null;
-        while (head!=null) {
+        while (head != null) {
             ListNode t = head.next;
             head.next = newHead;
             newHead = head;
@@ -17,16 +20,18 @@ public class ArrayReverse {
         }
         return newHead;
     }
+
     public ListNode initListNode(int[] array) {
         ListNode head = new ListNode(array[0]);
         ListNode p = head;
-        for (int i=1; i<array.length;i++) {
+        for (int i = 1; i < array.length; i++) {
             ListNode tmp = new ListNode(array[i]);
             p.next = tmp;
             p = tmp;
         }
         return head;
     }
+
     public void print(ListNode head, String prefix) {
         ListNode p = head;
         System.out.print(prefix);
@@ -63,6 +68,6 @@ public class ArrayReverse {
         int[] array = new int[]{1, 2, 3, 4};
         ListNode head = item.initListNode(array);
         item.print(head, "origin: ");
-        item.print(item.reverse2(head), "result: ");
+        item.print(item.reverse(head), "result: ");
     }
 }
