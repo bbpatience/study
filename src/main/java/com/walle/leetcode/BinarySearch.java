@@ -8,6 +8,7 @@ public class BinarySearch {
 
     /**
      * normal search.
+     *
      * @param a
      * @param start
      * @param end
@@ -30,6 +31,7 @@ public class BinarySearch {
 
     /**
      * recursive search.
+     *
      * @param a
      * @param start
      * @param end
@@ -37,7 +39,7 @@ public class BinarySearch {
      * @return
      */
     private static int search2(int[] a, int start, int end, int value) {
-        if (start > end )
+        if (start > end)
             return -1;
         int mid = start + (end - start) / 2;
         if (a[mid] == value) {
@@ -45,7 +47,7 @@ public class BinarySearch {
         } else if (a[mid] > value) {
             return search2(a, start, mid - 1, value);
         } else {
-            return search2(a, mid + 1, end , value);
+            return search2(a, mid + 1, end, value);
         }
     }
 
@@ -55,6 +57,7 @@ public class BinarySearch {
 
     /**
      * normal search.
+     *
      * @param a
      * @param start
      * @param end
@@ -66,12 +69,95 @@ public class BinarySearch {
             int mid = start + (end - start) / 2;
             if (a[mid] > value) {
                 end = mid - 1;
-            } else if (a[mid] < value){
+            } else if (a[mid] < value) {
                 start = mid + 1;
             } else {
                 if (mid == 0 || a[mid - 1] != value)
                     return mid;
                 end = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int searchLastMatch(int[] a, int value) {
+        return searchLastMatch(a, 0, a.length - 1, value);
+    }
+
+    /**
+     * normal search.
+     *
+     * @param a
+     * @param start
+     * @param end
+     * @param value
+     * @return
+     */
+    private static int searchLastMatch(int[] a, int start, int end, int value) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (a[mid] > value) {
+                end = mid - 1;
+            } else if (a[mid] < value) {
+                start = mid + 1;
+            } else {
+                if (mid == end || a[mid + 1] != value)
+                    return mid;
+                start = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int searchMoreThanOrEqual(int[] a, int value) {
+        return searchMoreThanOrEqual(a, 0, a.length - 1, value);
+    }
+
+    /**
+     * normal search.
+     *
+     * @param a
+     * @param start
+     * @param end
+     * @param value
+     * @return
+     */
+    private static int searchMoreThanOrEqual(int[] a, int start, int end, int value) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (a[mid] >= value) {
+                if (mid == 0 || a[mid - 1] < value)
+                    return mid;
+                end = mid - 1;
+            } else {
+                start = mid + 1;
+            }
+        }
+        return -1;
+    }
+
+    public static int searchLessThanOrEqual(int[] a, int value) {
+        return searchLessThanOrEqual(a, 0, a.length - 1, value);
+    }
+
+    /**
+     * normal search.
+     *
+     * @param a
+     * @param start
+     * @param end
+     * @param value
+     * @return
+     */
+    private static int searchLessThanOrEqual(int[] a, int start, int end, int value) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            if (a[mid] > value) {
+                end = mid - 1;
+            } else {
+                if (mid == end || a[mid + 1] > value)
+                    return mid;
+                start = mid + 1;
             }
         }
         return -1;
@@ -89,8 +175,26 @@ public class BinarySearch {
 
         // duplicated case.
         int[] array = new int[]{1, 23, 56, 89, 128, 256, 256, 256, 256, 496, 1024, 4096, 12345};
-        if ((idx = searchFirstMatch(array, 256)) > 0) {
-            System.out.println("find, index:" + idx);
+//        if ((idx = searchFirstMatch(array, 256)) > 0) {
+//            System.out.println("find first match, index:" + idx);
+//        } else {
+//            System.out.println("not found");
+//        }
+
+//        if ((idx = searchLastMatch(array, 256)) > 0) {
+//            System.out.println("find last match, index:" + idx);
+//        } else {
+//            System.out.println("not found");
+//        }
+
+//        if ((idx = searchMoreThanOrEqual(array, 257)) > 0) {
+//            System.out.println("find more than or equal , index:" + idx + " value=" + array[idx]);
+//        } else {
+//            System.out.println("not found");
+//        }
+
+        if ((idx = searchLessThanOrEqual(array, 130)) > 0) {
+            System.out.println("find less than or equal, index:" + idx + " value=" + array[idx]);
         } else {
             System.out.println("not found");
         }
