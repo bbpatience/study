@@ -1,4 +1,4 @@
-package com.walle.linklist;
+package com.walle.leetcode;
 
 import java.util.HashMap;
 import java.util.Map;
