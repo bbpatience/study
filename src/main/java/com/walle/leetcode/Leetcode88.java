@@ -29,9 +29,10 @@ public class Leetcode88 {
         }
 
         if (j < n) {
-            for (int k = j; k < n; ++k) {
-                nums1[i++] = nums2[k];
-            }
+            System.arraycopy(nums2, j, nums1, i, n - j);
+//            for (int k = j; k < n; ++k) {
+//                nums1[i++] = nums2[k];
+//            }
         }
     }
 
