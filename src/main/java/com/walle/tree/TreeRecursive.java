@@ -5,6 +5,7 @@ import static com.walle.tree.TreeUtils.print;
 
 /**
  * Recursively invoke.
+ *
  * @author: bbpatience
  * @date: 2019/7/25
  * @description: TreeRecursive
@@ -14,25 +15,25 @@ public class TreeRecursive {
     public static void main(String[] args) {
         Integer[] list = {9, 4, 13, null, null, 11, 15};
         TreeNode head = init(list);
-//        System.out.println("minDepth:" + minDepth(head));
-//        System.out.println("maxDepth:" + maxDepth(head));
-//        System.out.println("node count :" + getNodeNumRec(head));
-        print(head);
-        print(convertBST(head));
+        System.out.println("minDepth:" + minDepth(head));
+        System.out.println("maxDepth:" + maxDepth(head));
+        System.out.println("node count :" + getNodeNumRec(head));
+//        print(head);
+//        print(convertBST(head));
     }
 
     public static int minDepth(TreeNode root) {
-        if(root == null)
+        if (root == null)
             return 0;
         int left = minDepth(root.left);
         int right = minDepth(root.right);
-        return (left == 0 || right == 0) ? left + right + 1 : Math.min(left, right) + 1;
+        return (left * right == 0) ? left + right + 1 : Math.min(left, right) + 1;
     }
 
     public static int maxDepth(TreeNode root) {
-        if(root == null)
+        if (root == null)
             return 0;
-        return Math.max(maxDepth(root.left), maxDepth(root.right))+1;
+        return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
     }
 
     public static int getNodeNumRec(TreeNode root) {
@@ -54,8 +55,8 @@ public class TreeRecursive {
     }
 
     /*
-    * 计算累加树，
-    * */
+     * 计算累加树，
+     * */
     public static TreeNode convertBST(TreeNode root) {
         if (root != null) {
             dfs(root, 0);
