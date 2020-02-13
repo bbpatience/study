@@ -1,4 +1,4 @@
-package com.walle.leetcode;
+package com.walle.leetcode.simple;
 
 import java.util.HashSet;
 import java.util.Objects;

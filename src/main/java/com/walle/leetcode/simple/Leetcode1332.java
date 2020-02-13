@@ -1,4 +1,4 @@
-package com.walle.leetcode;
+package com.walle.leetcode.simple;
 
 /**
  * 给你一个字符串 s，它仅由字母 'a' 和 'b' 组成。每一次删除操作都可以从 s 中删除一个回文 子序列。

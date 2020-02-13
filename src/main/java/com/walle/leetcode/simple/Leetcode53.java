@@ -1,4 +1,4 @@
-package com.walle.leetcode;
+package com.walle.leetcode.simple;
 
 public class Leetcode53 {
     // DP.

@@ -1,4 +1,4 @@
-package com.walle.leetcode;
+package com.walle.leetcode.simple;
 
 //leetcode 26
 public class LeetCode26 {
