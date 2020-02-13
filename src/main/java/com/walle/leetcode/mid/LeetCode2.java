@@ -14,21 +14,16 @@ public class LeetCode2 {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 
         int flag = 0;
-        ListNode pre = null;
-        ListNode head = null;
+
+        ListNode head = new ListNode(-1);
+        ListNode pre = head;
         while (l1 != null || l2 != null) {
-            int left = l1 != null ? l1.value : 0;
-            int right = l2 != null ? l2.value : 0;
-            int sum = left + right + flag;
+            int sum = (l1 != null ? l1.value : 0) + (l2 != null ? l2.value : 0) + flag;
             flag = sum / 10;
-            sum %= 10;
-            if (head == null) {
-                head = new ListNode(sum);
-                pre = head;
-            } else {
-                pre.next = new ListNode(sum);
-                pre = pre.next;
-            }
+
+            pre.next = new ListNode(sum % 10);
+            pre = pre.next;
+
             l1 = l1 != null ? l1.next : null;
             l2 = l2 != null ? l2.next : null;
         }
@@ -36,7 +31,7 @@ public class LeetCode2 {
             pre.next = new ListNode(1);
         }
 
-        return head;
+        return head.next;
     }
 
     public ListNode initListNode(int[] array) {
