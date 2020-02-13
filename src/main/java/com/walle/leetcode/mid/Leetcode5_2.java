@@ -1,11 +1,9 @@
-package com.walle.linklist;
+package com.walle.leetcode.mid;
 
-/**
- * @author: bbpatience
- * @date: 2019/7/21
- * @description: LongestSubstr
- **/
-public class LongestSubstr {
+/*
+给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+ */
+public class Leetcode5_2 {
 
     public static String longestPalindrome(String s) {
         if (s.isEmpty()) {
