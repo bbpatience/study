@@ -10,8 +10,33 @@ import com.walle.linklist.ListNode;
 您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
  */
 public class LeetCode2 {
+
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        return null;
+
+        int flag = 0;
+        ListNode pre = null;
+        ListNode head = null;
+        while (l1 != null || l2 != null) {
+            int left = l1 != null ? l1.value : 0;
+            int right = l2 != null ? l2.value : 0;
+            int sum = left + right + flag;
+            flag = sum / 10;
+            sum %= 10;
+            if (head == null) {
+                head = new ListNode(sum);
+                pre = head;
+            } else {
+                pre.next = new ListNode(sum);
+                pre = pre.next;
+            }
+            l1 = l1 != null ? l1.next : null;
+            l2 = l2 != null ? l2.next : null;
+        }
+        if (flag == 1) {
+            pre.next = new ListNode(1);
+        }
+
+        return head;
     }
 
     public ListNode initListNode(int[] array) {
@@ -51,16 +76,15 @@ public class LeetCode2 {
     }
 
     public static void main(String[] args) {
-        int[] array1 = new int[]{2, 4, 3};
-        int[] array2 = new int[]{5, 6, 4};
+        int[] array1 = new int[]{1, 8};
+        int[] array2 = new int[]{0};
         LeetCode2 lc = new LeetCode2();
         ListNode head1 = lc.initListNode(array1);
         ListNode head2 = lc.initListNode(array2);
+        ListNode resultHead = lc.addTwoNumbers(head1, head2);
+
         lc.print(head1, "param1:");
         lc.print(head2, "param2:");
-
-        ListNode resultHead = lc.addTwoNumbers(head1, head2);
         lc.print(resultHead, "add result:");
-
     }
 }
