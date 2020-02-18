@@ -1,4 +1,4 @@
-package com.walle.leetcode.mid;
+package com.walle.leetcode.normal;
 
 /*
 给定一个 n × n 的二维矩阵表示一个图像。
