@@ -1,7 +1,11 @@
-package com.walle.leetcode;
+package com.walle.leetcode.normal;
 
-// leetcode 188.
-public class MaxProfit {
+/**
+ * 给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+ *
+ * 设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。
+ */
+public class Leetcode188 {
     public static int maxProfit(int k, int[] prices) {
         int len = prices.length;
         // 特判
