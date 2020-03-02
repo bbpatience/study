@@ -3,7 +3,6 @@ package com.walle.leetcode.normal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 /*
 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
@@ -18,16 +17,16 @@ candidates 中的数字可以无限制重复被选取。
 public class LeetCode40_2 {
 
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        Stack<Integer> stack = new Stack<>();
+        List<Integer> stack = new ArrayList<>();
         Arrays.sort(candidates);
         List<List<Integer>> resultList = new ArrayList<>();
         search(candidates, target, stack, resultList, 0);
         return resultList;
     }
 
-    public void search(int[] candidates, int target, Stack<Integer> stack, List<List<Integer>> resultList, int begin) {
+    public void search(int[] candidates, int target, List<Integer> stack, List<List<Integer>> resultList, int begin) {
         if (target == 0) {
-            resultList.add((List) stack.clone());
+            resultList.add(new ArrayList<>(stack));
             return;
         }
         for (int i = begin; i < candidates.length; ++i) {
@@ -36,9 +35,9 @@ public class LeetCode40_2 {
                 break;
             if (i > begin && candidates[i] == candidates[i - 1]) //和39不同， 要去重
                 continue;
-            stack.push(candidates[i]);
+            stack.add(candidates[i]);
             search(candidates, remain, stack, resultList, i + 1); // 和39不同， 要 i + 1.
-            stack.pop();
+            stack.remove(stack.size() - 1);
         }
     }
 

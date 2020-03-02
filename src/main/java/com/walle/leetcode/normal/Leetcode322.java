@@ -20,7 +20,6 @@ public class Leetcode322 {
 
     public static void main(String[] args) {
         Leetcode322 lc = new Leetcode322();
-        boolean[] dp = new boolean[3];
         int[] coins = {1, 2, 5};
         System.out.println(lc.coinChange(coins, 11));
     }
