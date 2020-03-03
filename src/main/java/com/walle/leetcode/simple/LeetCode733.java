@@ -31,7 +31,7 @@ public class LeetCode733 {
         if (!isValid(i, j, image))
             return;
         image[i][j] = newColor;
-        for (int k = 0; k < 4; ++k) {
+        for (int k = 0; k < array.length; ++k) {
             dfs(image, i + array[k][0], j + array[k][1]);
         }
     }
