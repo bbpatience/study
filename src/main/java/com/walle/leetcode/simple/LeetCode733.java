@@ -14,6 +14,7 @@ public class LeetCode733 {
     private int n;
     private int color;
     private int newColor;
+    private int[][] array = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
     public int[][] floodFill(int[][] image, int sr, int sc, int newColor) {
         if (image == null || image.length == 0)
@@ -30,10 +31,9 @@ public class LeetCode733 {
         if (!isValid(i, j, image))
             return;
         image[i][j] = newColor;
-        dfs(image, i - 1, j);
-        dfs(image, i + 1, j);
-        dfs(image, i, j + 1);
-        dfs(image, i, j - 1);
+        for (int k = 0; k < 4; ++k) {
+            dfs(image, i + array[k][0], j + array[k][1]);
+        }
     }
 
     private boolean isValid(int i, int j, int[][] image) {
