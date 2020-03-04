@@ -19,17 +19,14 @@ public class Trie {
 
     private void insert(TrieNode node, String word, int i) {
         int idx = word.charAt(i) - 'a';
+        if (node.nodes[idx] == null) {
+            node.nodes[idx] = new TrieNode();
+        }
         if (i == word.length() - 1) {
-            if (node.nodes[idx] == null) {
-                node.nodes[idx] = new TrieNode();
-            }
             node.nodes[idx].isLeaf = true;
             return;
         }
 
-        if (node.nodes[idx] == null) {
-            node.nodes[idx] = new TrieNode();
-        }
         insert(node.nodes[idx], word, i + 1);
     }
     /** Inserts a word into the trie. */
