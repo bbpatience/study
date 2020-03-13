@@ -65,6 +65,6 @@ public class Leetcode101 {
         Integer[] list = {1, 2, 2, 3, 4, 4, 3};
         TreeNode head = init(list);
         print(head);
-        System.out.println(lc.isSymmetric2(head));
+        System.out.println(lc.isSymmetric(head));
     }
 }
