@@ -11,19 +11,16 @@ public class Leetcode125 {
         int i = 0;
         int j = s.length() - 1;
         while (i < j) {
-            if (!isValid(s.charAt(i))) {
+            while (!isValid(s.charAt(i))) {
                 ++i;
             }
-            else if (!isValid(s.charAt(j))) {
+            while (!isValid(s.charAt(j))) {
                 --j;
-            } else {
-                if (s.charAt(i) != s.charAt(j))
-                    return false;
-                else {
-                    ++i;
-                    --j;
-                }
             }
+            if (s.charAt(i) != s.charAt(j))
+                return false;
+            ++i;
+            --j;
         }
         return true;
     }
