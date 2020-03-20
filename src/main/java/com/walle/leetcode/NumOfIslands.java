@@ -18,7 +18,7 @@ public class NumOfIslands {
     }
 
     private void DFS(char[][] grid, int i, int j, int m, int n) {
-        if (isValid(grid, i, j, m, n)) {
+        if (notValid(grid, i, j, m, n)) {
             return;
         }
         grid[i][j] = '0';
@@ -28,7 +28,7 @@ public class NumOfIslands {
         DFS(grid, i, j - 1, m, n);
     }
 
-    private boolean isValid(char[][] grid, int i, int j, int m, int n) {
+    private boolean notValid(char[][] grid, int i, int j, int m, int n) {
         return i < 0 || i >= m || j < 0 || j >= n || grid[i][j] == '0';
     }
 

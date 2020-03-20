@@ -3,7 +3,7 @@ package com.walle.leetcode;
 public class BinarySearch {
 
     public static int search(int[] a, int value) {
-        return search2(a, 0, a.length - 1, value);
+        return search(a, 0, a.length - 1, value);
     }
 
     /**
