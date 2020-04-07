@@ -35,7 +35,7 @@ public class Leetcode191 {
         /**
          * n & 1 == 1 判断奇偶
          * n & (n-1) 打掉最低位 1
-         * n & ~n 得到最低位1
+         * n & -n 得到最低位1
          */
         System.out.println(Integer.toString(n,2) );
         n &= (n-1);

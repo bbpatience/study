@@ -7,7 +7,7 @@ public class KthLargest {
     private int k;
     public KthLargest(int k, int[] nums) {
         this.k = k;
-        queue = new PriorityQueue<>(k);
+        queue = new PriorityQueue<>(k, (n1, n2) -> n2 - n1);
         for (int a : nums) {
             add(a);
         }
@@ -17,7 +17,7 @@ public class KthLargest {
         if (queue.size() < k) {
             queue.offer(val);
         }
-        else if (val > queue.peek()) {
+        else if (val < queue.peek()) {
             queue.poll();
             queue.offer(val);
         }
@@ -25,7 +25,7 @@ public class KthLargest {
     }
 
     public static void main(String[] args) {
-        int k = 1;
+        int k = 2;
         int[] arr = new int[]{};
         KthLargest kthLargest = new KthLargest(k, arr);
         System.out.println(kthLargest.add(3)); // returns 4
